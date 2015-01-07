@@ -1,0 +1,5 @@
+var configs = {
+    apiServer: "http://localhost:8000"
+}
+
+module.exports = configs;
