@@ -6,6 +6,7 @@ var chalk = require('chalk');
 var inquirer = require('inquirer');
 var _ = require('lodash');
 var fs = require('fs');
+var key = require('./key.js');
 
 var inputs = process.argv;
 
@@ -13,10 +14,12 @@ function processInputs() {
     var numbersRegEx = new RegExp('[0-9]');
     if (!inputs[2]) {
         usage();
-    };
+    }
+    ;
     if (numbersRegEx.test(inputs[2])) {
         getArrivals(inputs[2], displayArrivals);
-    };
+    }
+    ;
 
     if (inputs[2] == '-l') {
         var address = inputs[3];
@@ -27,18 +30,20 @@ function processInputs() {
         getNearbyStops(address, (inputs[4] || null), function (stops) {
             displayNearbyStops(stops)
         });
-    };
+    }
+    ;
 
-    if (inputs[2] == '-f'){
+    if (inputs[2] == '-f') {
         getArrivalsFromFavorites();
-    };
+    }
+    ;
 
 }
 
 function getArrivals(stop, callback) {
 
     var arrivals = '';
-    http.get(config.apiServer + "/arrivals/" + stop, function (res) {
+    http.get(config.apiServer + "/arrivals/" + stop + "?key=" + key(), function (res) {
         res.on('data', function (chunk) {
             arrivals += chunk.toString();
         });
@@ -56,43 +61,51 @@ function getArrivals(stop, callback) {
     });
 }
 
-function getArrivalsFromFavorites(){
+function getArrivalsFromFavorites() {
     var favorites = {};
     try {
         favorites = JSON.parse(fs.readFileSync("favorites.json", {encoding: 'utf8'}));
     }
-    catch (err){
+    catch (err) {
         console.log("You don't appear to have a favorites file.\n" +
             "To create one: gopdx -l '123 NW 4th Ave.'");
         process.exit();
     }
-    if (favorites.favoriteStops.length == 0){
+    if (favorites.favoriteStops.length == 0) {
         console.log("Your favorites file has no stops.\n" +
             "To create one: gopdx -l '123 NW 4th Ave.'");
         process.exit();
     }
-    favorites.favoriteStops.forEach(function(stop){
+    favorites.favoriteStops.forEach(function (stop) {
         getArrivals(stop, displayArrivals);
     })
 }
 
 function displayArrivals(stop, arrivalData) {
+    var arrivalsFound = 0;
+    console.log(chalk.cyan('Stop number: ' + chalk.bold(stop)) + " " + chalk.green(arrivalData.resultSet.location[0].desc));
     if (arrivalData.resultSet.arrival) {
-        console.log('Stop number:' + stop);
         arrivalData.resultSet.arrival.forEach(function (arrival) {
-            if (arrival.status == "scheduled") {
-                arrivalTime = moment(arrival.sheduled);
-            }
-            else {
-                arrivalTime = moment(arrival.estimated);
+            if (arrival.departed == false) {
+                arrivalsFound++;
+                if (arrival.status == "scheduled") {
+                    arrivalTime = moment(arrival.scheduled);
+                    console.log(chalk.bold(arrival.shortSign) +
+                    " " + arrivalTime.fromNow() + chalk.yellow(" [scheduled]"));
+                }
+                else {
+                    arrivalTime = moment(arrival.estimated);
+                    console.log(chalk.bold(arrival.shortSign) + " " + arrivalTime.fromNow() + chalk.green(" [actual]"));
+                }
             }
 
-            process.stdout.write(arrival.shortSign + "\n");
-            process.stdout.write("Arriving: " + arrivalTime.fromNow() + ((arrival.status == "scheduled") ? " [scheduled] " : "[actual]") + "\n");
         })
+        if (arrivalsFound == 0) {
+            console.log("Sorry, no arrivals currently found for that stop.");
+        }
     }
     else {
-        console.log("Sorry, no arrivals found for that stop ID");
+        console.log("Sorry, no arrivals currently found for that stop.");
     }
 }
 
@@ -106,7 +119,8 @@ function getNearbyStops(address, distance, callback) {
 
         lat = locationData[0].latLng.lat;
         lng = locationData[0].latLng.lng;
-        http.get(config.apiServer + "/stops?lat=" + lat + "&lng=" + lng, function (res) {
+        console.log(config.apiServer + "/stops?lat=" + lat + "&lng=" + lng + "&key=" + key());
+        http.get(config.apiServer + "/stops?lat=" + lat + "&lng=" + lng + "&key=" + key(), function (res) {
             var stops = '';
             res.on('data', function (chunk) {
                 stops += chunk.toString();
@@ -128,7 +142,8 @@ function getNearbyStops(address, distance, callback) {
 }
 
 function getCoordinates(address, callback) {
-    http.get(config.apiServer + "/coordinates/" + encodeURI(address), function (res) {
+    console.log();
+    http.get(config.apiServer + "/coordinates/" + encodeURI(address) + "?key=" + key(), function (res) {
         var mqData = '';
 
         res.on('data', function (chunk) {
@@ -149,49 +164,53 @@ function getCoordinates(address, callback) {
 
 function displayNearbyStops(stops) {
     if (stops.resultSet.location) {
-        var stopsArray = {favoriteStops:[]};
+        var stopsArray = {favoriteStops: []};
 
         stops.resultSet.location.forEach(
 
             function (stop) {
                 var lines = [];
-                stop.route.forEach(function(route){
+                stop.route.forEach(function (route) {
                     lines.push("     " + route.desc + " " + route.dir[0].desc);
                 });
                 //console.log(stop);
-                stopsArray.favoriteStops.push({name: stop.desc + " ID: " + stop.locid + "\n    Lines:\n" + lines.join('\n')  , value: stop.locid});
+                stopsArray.favoriteStops.push({name: stop.desc + " ID: " + stop.locid + "\n    Lines:\n" + lines.join('\n'), value: stop.locid});
             }
         )
 
-    inquirer.prompt(
-        {type: 'checkbox',
-            name: 'favoriteStops',
-            message: 'Please select any stops to save to your favorites:',
-            choices: stopsArray.favoriteStops}, function (answer) {
-            saveStopsToFavorites(answer);
-           });
+        inquirer.prompt(
+            {type: 'checkbox',
+                name: 'favoriteStops',
+                message: 'Please select any stops to save to your favorites:',
+                choices: stopsArray.favoriteStops}, function (answer) {
+                saveStopsToFavorites(answer);
+            });
     }
 
-    else{
+    else {
         console.log("We couldn't find any stops for that area");
     }
 }
 
-function saveStopsToFavorites(selectedStops){
+function saveStopsToFavorites(selectedStops) {
     var favorites = {favoriteStops: []};
-    try{
-        favorites = JSON.parse(fs.readFileSync("favorites.json", {encoding:'utf8'}));
+    try {
+        favorites = JSON.parse(fs.readFileSync("favorites.json", {encoding: 'utf8'}));
     }
-    catch (err){
+    catch (err) {
         //console.log(err);
     }
 
     favorites.favoriteStops = _.union(favorites.favoriteStops, selectedStops.favoriteStops);
 
-    try{
-        fs.writeFileSync("favorites.json", JSON.stringify(favorites), {encoding:'utf8'});
+    try {
+        fs.writeFileSync("favorites.json", JSON.stringify(favorites), {encoding: 'utf8'});
+        console.log("Stops saved to your favorites file. \n" +
+            "To check arrivals from favorites use gopdx -f");
     }
-    catch(err){
+    catch (err) {
+        console.log("We couldn't write to your favorites file!\nMake sure NodeJS has write permissions for the gopdx" +
+            "directory");
         console.log(err);
     }
 }
@@ -199,8 +218,7 @@ function saveStopsToFavorites(selectedStops){
 function locationPicker(locations) {
     console.log("Your search returned more than one location. Please refine your search address.");
 
-
-    return location;
+    return;
 };
 
 function parseOregonLocations(locationData) {
