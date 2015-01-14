@@ -119,7 +119,6 @@ function getNearbyStops(address, distance, callback) {
 
         lat = locationData[0].latLng.lat;
         lng = locationData[0].latLng.lng;
-        console.log(config.apiServer + "/stops?lat=" + lat + "&lng=" + lng + "&key=" + key());
         http.get(config.apiServer + "/stops?lat=" + lat + "&lng=" + lng + "&key=" + key(), function (res) {
             var stops = '';
             res.on('data', function (chunk) {
@@ -142,7 +141,7 @@ function getNearbyStops(address, distance, callback) {
 }
 
 function getCoordinates(address, callback) {
-    console.log();
+
     http.get(config.apiServer + "/coordinates/" + encodeURI(address) + "?key=" + key(), function (res) {
         var mqData = '';
 
