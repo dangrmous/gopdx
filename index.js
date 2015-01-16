@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 var http = require('http');
 var config = require('./gopdxConfig.js');
 var moment = require('moment');
