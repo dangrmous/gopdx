@@ -66,7 +66,7 @@ function getArrivals(stop, callback) {
 function getArrivalsFromFavorites() {
     var favorites = {};
     try {
-        favorites = JSON.parse(fs.readFileSync("favorites.json", {encoding: 'utf8'}));
+        favorites = JSON.parse(fs.readFileSync("/tmp/favorites.json", {encoding: 'utf8'}));
     }
     catch (err) {
         console.log("You don't appear to have a favorites file.\n" +
