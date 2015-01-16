@@ -196,7 +196,7 @@ function displayNearbyStops(stops) {
 function saveStopsToFavorites(selectedStops) {
     var favorites = {favoriteStops: []};
     try {
-        favorites = JSON.parse(fs.readFileSync("favorites.json", {encoding: 'utf8'}));
+        favorites = JSON.parse(fs.readFileSync("/tmp/favorites.json", {encoding: 'utf8'}));
     }
     catch (err) {
         //console.log(err);
