@@ -12,7 +12,17 @@ var key = require('./key.js');
 
 var inputs = process.argv;
 
+
+if (config.favoritesPath == "") {
+    var favoritesPath = __dirname + "/favorites.json";
+}
+else {
+    favoritesPath = config.favoritesPath;
+}
+
+
 function processInputs() {
+
     var numbersRegEx = new RegExp('[0-9]');
     if (!inputs[2]) {
         usage();
@@ -65,7 +75,7 @@ function getArrivals(stop, callback) {
 function getArrivalsFromFavorites() {
     var favorites = {};
     try {
-        favorites = JSON.parse(fs.readFileSync("/tmp/favorites.json", {encoding: 'utf8'}));
+        favorites = JSON.parse(fs.readFileSync(favoritesPath, {encoding: 'utf8'}));
     }
     catch (err) {
         console.log("You don't appear to have a favorites file.\n" +
@@ -87,21 +97,21 @@ function displayArrivals(stop, arrivalData) {
     console.log(chalk.cyan('Stop number: ' + chalk.bold(stop)) + " " + chalk.green(arrivalData.resultSet.location[0].desc));
     if (arrivalData.resultSet.arrival) {
         arrivalData.resultSet.arrival.forEach(function (arrival) {
-;
+            ;
             if (arrival.status == "scheduled") {
                 arrivalsFound++;
                 arrivalTime = moment(arrival.scheduled);
-                if(arrivalTime > moment()){
-                console.log(chalk.bold(arrival.shortSign) +
-                    " " + arrivalTime.fromNow() + " at " + arrivalTime.format('h:mm a') + chalk.yellow(" [scheduled]"));
+                if (arrivalTime > moment()) {
+                    console.log(chalk.bold(arrival.shortSign) +
+                        " " + arrivalTime.fromNow() + " at " + arrivalTime.format('h:mm a') + chalk.yellow(" [scheduled]"));
                 }
             }
             else {
 
                 arrivalTime = moment(arrival.estimated);
-                if(arrivalTime > moment()){
+                if (arrivalTime > moment()) {
                     arrivalsFound++;
-                console.log(chalk.bold(arrival.shortSign) + " " + arrivalTime.fromNow()+ " at " + arrivalTime.format('h:mm a') + chalk.green(" [actual]"));
+                    console.log(chalk.bold(arrival.shortSign) + " " + arrivalTime.fromNow() + " at " + arrivalTime.format('h:mm a') + chalk.green(" [actual]"));
                 }
             }
         })
@@ -198,8 +208,10 @@ function displayNearbyStops(stops) {
 
 function saveStopsToFavorites(selectedStops) {
     var favorites = {favoriteStops: []};
+
+
     try {
-        favorites = JSON.parse(fs.readFileSync("/tmp/favorites.json", {encoding: 'utf8'}));
+        favorites = JSON.parse(fs.readFileSync(favoritesPath, {encoding: 'utf8'}));
     }
     catch (err) {
         //console.log(err);
@@ -208,14 +220,13 @@ function saveStopsToFavorites(selectedStops) {
     favorites.favoriteStops = _.union(favorites.favoriteStops, selectedStops.favoriteStops);
 
     try {
-        fs.writeFileSync("favorites.json", JSON.stringify(favorites), {encoding: 'utf8'});
+        fs.writeFileSync(favoritesPath, JSON.stringify(favorites), {encoding: 'utf8'});
         console.log("Stops saved to your favorites file. \n" +
             "To check arrivals from favorites use gopdx -f");
     }
     catch (err) {
-        console.log("We couldn't write to your favorites file!\nMake sure NodeJS has write permissions for the gopdx" +
-            "directory");
-        console.log(err);
+        console.log("We couldn't write to your favorites file!\nMake sure NodeJS has write permissions for the directory "
+            + favoritesPath + " or set your own directory path in the gopdxConfig.js file, like ~/favorites.json or similar");
     }
 }
 
