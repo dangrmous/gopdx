@@ -50,7 +50,6 @@ function getArrivals(stop, callback) {
             arrivals += chunk.toString();
         });
         res.on('end', function () {
-
             arrivals = JSON.parse(arrivals);
             callback(stop, arrivals);
 
@@ -88,19 +87,23 @@ function displayArrivals(stop, arrivalData) {
     console.log(chalk.cyan('Stop number: ' + chalk.bold(stop)) + " " + chalk.green(arrivalData.resultSet.location[0].desc));
     if (arrivalData.resultSet.arrival) {
         arrivalData.resultSet.arrival.forEach(function (arrival) {
-            if (arrival.departed == false) {
+;
+            if (arrival.status == "scheduled") {
                 arrivalsFound++;
-                if (arrival.status == "scheduled") {
-                    arrivalTime = moment(arrival.scheduled);
-                    console.log(chalk.bold(arrival.shortSign) +
-                    " " + arrivalTime.fromNow() + chalk.yellow(" [scheduled]"));
-                }
-                else {
-                    arrivalTime = moment(arrival.estimated);
-                    console.log(chalk.bold(arrival.shortSign) + " " + arrivalTime.fromNow() + chalk.green(" [actual]"));
+                arrivalTime = moment(arrival.scheduled);
+                if(arrivalTime > moment()){
+                console.log(chalk.bold(arrival.shortSign) +
+                    " " + arrivalTime.fromNow() + " at " + arrivalTime.format('h:mm a') + chalk.yellow(" [scheduled]"));
                 }
             }
+            else {
 
+                arrivalTime = moment(arrival.estimated);
+                if(arrivalTime > moment()){
+                    arrivalsFound++;
+                console.log(chalk.bold(arrival.shortSign) + " " + arrivalTime.fromNow()+ " at " + arrivalTime.format('h:mm a') + chalk.green(" [actual]"));
+                }
+            }
         })
         if (arrivalsFound == 0) {
             console.log("Sorry, no arrivals currently found for that stop.");
