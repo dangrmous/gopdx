@@ -19,7 +19,8 @@ gopdx -f to display arrivals for stops from your favorites file
 
 ####A note about the favorites file:
 The favorites.json file can be edited directly or deleted entirely (if you'd like to start over).
-It is located where Node installs the gopdx app.
+It is located where Node installs the gopdx app, typically in /usr/local/lib/node_modules/gopdx/ but
+this may vary.
 
 The favorites are stored as JSON data with a single favoriteStops array, like so: {"favoriteStops":[7646,2439,7821]}
 You may add as many stops as you'd like, but too many can make viewing the arrivals difficult.
