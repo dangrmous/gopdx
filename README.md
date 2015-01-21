@@ -1,4 +1,4 @@
-#GoPDX 0.1.5
+#GoPDX 0.1.6
 
 ##GoPDX is a Portland, Oregon Tri-Met bus and light rail arrival tracker
 

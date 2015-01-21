@@ -1,6 +1,6 @@
 {
     "name": "gopdx",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "description": "Command-line Portland, Oregon bus and light rail arrival tracker",
     "main": "index.js",
     "scripts": {

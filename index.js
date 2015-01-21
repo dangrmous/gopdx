@@ -60,7 +60,7 @@ function processInputs() {
     ;
     if (inputs[2] == '-n'){
         var name = inputs[3];
-        if((typeof address) != "string"){
+        if((typeof name) != "string"){
             console.log("Please enter search terms in quotes separated by spaces to search by keywords");
             process.exit();
         }
