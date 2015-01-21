@@ -14,6 +14,8 @@ var inputs = process.argv;
 
 var separatorChar = (process.platform == "win32" ? "\\" : "/" );
 
+console.log("__dirname is: " + __dirname);
+
 if(fs.existsSync("favorites.json")){ //legacy file location for 0.1.2 and before
     var favoritesPath=("favorites.json")
 }
@@ -39,6 +41,10 @@ function processInputs() {
 
     if (inputs[2] == '-l') {
         var address = inputs[3];
+        if((typeof address) != "string"){
+            console.log("Please enter a street address in quotes after -l to search by address");
+            process.exit();
+        }
         address = address.toLowerCase();
         if (address.indexOf("oregon") == -1) {
             address += ' , oregon';
@@ -55,6 +61,10 @@ function processInputs() {
     ;
     if (inputs[2] == '-n'){
         var name = inputs[3];
+        if((typeof address) != "string"){
+            console.log("Please enter search terms in quotes separated by spaces to search by keywords");
+            process.exit();
+        }
         name = name.toLowerCase();
         getStopsByName(name);
     }
