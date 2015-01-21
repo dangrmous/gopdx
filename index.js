@@ -12,9 +12,13 @@ var key = require('./key.js');
 
 var inputs = process.argv;
 
+var separatorChar = (process.platform == "win32" ? "\\" : "/" );
 
-if (config.favoritesPath == "") {
-    var favoritesPath = __dirname + "/favorites.json";
+if(fs.existsSync("favorites.json")){ //legacy file location for 0.1.2 and before
+    var favoritesPath=("favorites.json")
+}
+else if (config.favoritesPath == "") {
+    favoritesPath = __dirname + separatorChar + "favorites.json";
 }
 else {
     favoritesPath = config.favoritesPath;
@@ -189,9 +193,11 @@ function displayNearbyStops(stops) {
 
             function (stop) {
                 var lines = [];
+                if(stop.route){
                 stop.route.forEach(function (route) {
                     lines.push("     " + route.desc + " " + route.dir[0].desc);
                 });
+                }
                 //console.log(stop);
                 stopsArray.favoriteStops.push({name: stop.desc + " ID: " + stop.locid + "\n    Lines:\n" + lines.join('\n'), value: stop.locid});
             }
@@ -230,7 +236,8 @@ function saveStopsToFavorites(selectedStops) {
     }
     catch (err) {
         console.log("We couldn't write to your favorites file!\nMake sure NodeJS has write permissions for the directory "
-            + favoritesPath + " or set your own directory path in the gopdxConfig.js file, like ~/favorites.json or similar");
+            + favoritesPath + " or set your own directory path (including file name) in the gopdxConfig.js file, " +
+            "like /tmp/favorites.json or similar");
     }
 }
 

@@ -5,11 +5,13 @@ var usage = function () {
 
     console.log(chalk.yellow(chalk.bold("Welcome to gopdx, the Tri-Met transit tracker")));
     newVersionCheck(displayNewVersionMessage);
-    console.log(chalk.bold('Usage:\n') + 'gopdx [stop number]\n' +
+    console.log(chalk.bold('Usage:\n') + 'gopdx [stop number]\n\n' +
         'gopdx -l "123 Fake St., Portland, Oregon" to find nearby stops\n ' +
-        'and add them to your favorites file\n' +
+        'by address and add them to your favorites file\n\n' +
+        'gopdx -n "kenton max" to search for stops using keywords \n' +
+        'separated by spaces and add them to your favorites file\n\n' +
         'gopdx -f to display arrivals for stops from your favorites file\n\n' +
-        'For more information please see the README.md and \npackage.json files at https://github.com/dangrmous/gopdx');
+        'For more information please see https://www.npmjs.com/package/gopdx');
 }
 
 var displayNewVersionMessage = function(newVerAvailable){
