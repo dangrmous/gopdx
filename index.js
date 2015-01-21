@@ -49,6 +49,11 @@ function processInputs() {
         getArrivalsFromFavorites();
     }
     ;
+    if (inputs[2] == '-n'){
+        var name = inputs[3];
+        name = name.toLowerCase();
+        getStopsByName(name);
+    }
 
 }
 
@@ -209,7 +214,6 @@ function displayNearbyStops(stops) {
 function saveStopsToFavorites(selectedStops) {
     var favorites = {favoriteStops: []};
 
-
     try {
         favorites = JSON.parse(fs.readFileSync(favoritesPath, {encoding: 'utf8'}));
     }
@@ -244,6 +248,39 @@ function parseOregonLocations(locationData) {
         }
     });
     return oregonLocations;
+}
+
+function getStopsByName(name){
+    var stops = '';
+    var choiceArray = [];
+    http.get((config.apiServer + "/namesearch?key=" + key() + "&searchterms=" + encodeURI(name)), function(res){
+        res.on('data', function(chunk){
+            stops += chunk.toString();
+        });
+        res.on('end',function(){
+            stops = JSON.parse(stops);
+            if(stops.error){
+                console.log(stops.error);
+                process.exit();
+            }
+            stops.forEach(function(stop){
+                choiceArray.push({
+                    name:stop.stop_name + " - ID: "+ stop.stop_id +" - Direction: " + stop.direction,
+                    value:stop.stop_code});
+            });
+            inquirer.prompt(
+                {type: 'checkbox',
+                    name: 'favoriteStops',
+                    message: 'Please select any stops to save to your favorites:',
+                    choices: choiceArray}, function (answer) {
+                    saveStopsToFavorites(answer);
+                });
+
+        });
+        res.on('error',function(err){
+            console.log(err);
+        });
+    })
 }
 
 processInputs();
