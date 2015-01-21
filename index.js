@@ -14,7 +14,6 @@ var inputs = process.argv;
 
 var separatorChar = (process.platform == "win32" ? "\\" : "/" );
 
-console.log("__dirname is: " + __dirname);
 
 if(fs.existsSync("favorites.json")){ //legacy file location for 0.1.2 and before
     var favoritesPath=("favorites.json")
