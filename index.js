@@ -38,7 +38,7 @@ function processInputs() {
     }
     ;
 
-    if (inputs[2] == '-l') {
+    if ((inputs[2] == '-l') || (inputs[2] == '-locate')) {
         var address = inputs[3];
         if((typeof address) != "string"){
             console.log("Please enter a street address in quotes after -l to search by address");
@@ -54,11 +54,11 @@ function processInputs() {
     }
     ;
 
-    if (inputs[2] == '-f') {
+    if ((inputs[2] == '-f') || (inputs[2] == '-favorites')) {
         getArrivalsFromFavorites();
     }
     ;
-    if (inputs[2] == '-n'){
+    if ((inputs[2] == '-n') || (inputs[2] == '-name') || (inputs[2] == '-keyword') || (inputs[2] == '-k')){
         var name = inputs[3];
         if((typeof name) != "string"){
             console.log("Please enter search terms in quotes separated by spaces to search by keywords");
@@ -66,6 +66,9 @@ function processInputs() {
         }
         name = name.toLowerCase();
         getStopsByName(name);
+    }
+    if ((inputs[2] == '-c') || (inputs[2] == '-continuous')){
+        displayArrivalsContinuously();
     }
 
 }
@@ -80,7 +83,6 @@ function getArrivals(stop, callback) {
         res.on('end', function () {
             arrivals = JSON.parse(arrivals);
             callback(stop, arrivals);
-
         })
 
         res.on('error', function (e) {
@@ -297,6 +299,18 @@ function getStopsByName(name){
             console.log(err);
         });
     })
+}
+
+function displayArrivalsContinuously(){
+    process.stdout.write('\033[2J');
+    process.stdout.write('\033[0;0H');
+    getArrivalsFromFavorites();
+setInterval(
+    function(){
+        getArrivalsFromFavorites();
+        process.stdout.write('\033[0;0H');
+    }, 10000)
+
 }
 
 processInputs();

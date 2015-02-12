@@ -6,21 +6,21 @@
 
 gopdx [stop number] to display upcoming arrivals for stop
 
-gopdx -l "123 Fake St., Portland, Oregon" to find nearby stops
+gopdx -l (or -locate) "123 Fake St., Portland, Oregon" to find nearby stops
  by address and add them to your favorites file.
  Please note that gopdx uses the MapQuest geocoding API which works best
  with regular numerical street addresses, so "NW 5th and Couch" is
  better written as "500 NW Couch"
 
-gopdx -n "kenton max" to search for stops using keywords
+gopdx -n (or -name, -k, -keyword) "kenton max" to search for stops using keywords
 separated by spaces and add them to your favorites file
 
-gopdx -f to display arrivals for stops from your favorites file
+gopdx -f (or -favorites) to display arrivals for stops from your favorites file
 
-####Version 0.1.5 Release notes:
-* Bug fix: where not all arrivals were shown if vehicle had not departed for trip
-* New feature: ability so search for stops by keyword using -n
-* New feature: change location of the favorites.json file in gopdxConfig.js
+gopdx -c (or -continuous) to run continuously, updating arrivals for favorite stops every 60 seconds
+
+####Version 0.1.7 Release notes:
+* New feature: fixed mode: gopdx will run continuously, updating arrivals every 60 seconds
 
 ####A note about the favorites file:
 The favorites.json file can be edited directly or deleted entirely (if you'd like to start over).
