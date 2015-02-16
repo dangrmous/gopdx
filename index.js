@@ -9,6 +9,7 @@ var inquirer = require('inquirer');
 var _ = require('lodash');
 var fs = require('fs');
 var key = require('./key.js');
+var Q = require('q');
 
 var inputs = process.argv;
 
@@ -34,7 +35,11 @@ function processInputs() {
     }
     ;
     if (numbersRegEx.test(inputs[2])) {
-        getArrivals(inputs[2], displayArrivals);
+        var deferred = Q.defer();
+        getArrivals(inputs[2], deferred);
+        deferred.promise.then(function(data){
+           displayArrivals(data[0], data[1]);
+        });
     }
     ;
 
@@ -73,7 +78,7 @@ function processInputs() {
 
 }
 
-function getArrivals(stop, callback) {
+function getArrivals(stop, deferred) {
 
     var arrivals = '';
     var waiting = true;
@@ -83,7 +88,7 @@ function getArrivals(stop, callback) {
         });
         res.on('end', function () {
             arrivals = JSON.parse(arrivals);
-            callback(stop, arrivals);
+            deferred.resolve([stop, arrivals]);
         });
         res.on('error', function (e) {
             console.error(e);
@@ -94,6 +99,8 @@ function getArrivals(stop, callback) {
 
 function getArrivalsFromFavorites() {
     var favorites = {};
+    var deferredArray = [];
+    var promiseArray = [];
     try {
         favorites = JSON.parse(fs.readFileSync(favoritesPath, {encoding: 'utf8'}));
     }
@@ -107,9 +114,16 @@ function getArrivalsFromFavorites() {
             "To create one: gopdx -l '123 NW 4th Ave.'");
         process.exit();
     }
-    favorites.favoriteStops.forEach(function (stop) {
-        getArrivals(stop, displayArrivals);
-    })
+    favorites.favoriteStops.forEach(function (stop, index) {
+        deferredArray[index] = Q.defer();
+        promiseArray[index] = deferredArray[index].promise;
+        getArrivals(stop, deferredArray[index]);
+    });
+    Q.all(promiseArray).then(function(){
+        promiseArray.forEach(function(item){
+            displayArrivals(item[0], item[1]);
+        });
+    });
 }
 
 function displayArrivals(stop, arrivalData) {
