@@ -76,6 +76,7 @@ function processInputs() {
 function getArrivals(stop, callback) {
 
     var arrivals = '';
+    var waiting = true;
     http.get(config.apiServer + "/arrivals/" + stop + "?key=" + key(), function (res) {
         res.on('data', function (chunk) {
             arrivals += chunk.toString();
@@ -83,8 +84,7 @@ function getArrivals(stop, callback) {
         res.on('end', function () {
             arrivals = JSON.parse(arrivals);
             callback(stop, arrivals);
-        })
-
+        });
         res.on('error', function (e) {
             console.error(e);
         });
@@ -302,6 +302,13 @@ function getStopsByName(name){
 }
 
 function displayArrivalsContinuously(){
+    process.stdin.resume();
+    process.on('SIGWINCH', function() {
+        console.log("WAT");
+        process.exit('Got SIGWINCH!');
+        process.stdout.write('\033[2J');
+        process.stdout.write('\033[0;0H');
+    });
     process.stdout.write('\033[2J');
     process.stdout.write('\033[0;0H');
     getArrivalsFromFavorites();
