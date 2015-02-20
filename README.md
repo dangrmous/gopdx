@@ -19,8 +19,8 @@ gopdx -f (or -favorites) to display arrivals for stops from your favorites file
 
 gopdx -c (or -continuous) to run continuously, updating arrivals for favorite stops every 60 seconds
 
-####Version 0.1.8 Release notes:
-* New feature: fixed mode: gopdx will run continuously, updating arrivals every 60 seconds
+####Version 0.1.9 Release notes:
+* -l (-locate) mode temporarily disabled until MapQuest fixes an API problem. Please use -n (-k, -keyword) in the mean time.
 
 ####A note about the favorites file:
 The favorites.json file can be edited directly or deleted entirely (if you'd like to start over).
