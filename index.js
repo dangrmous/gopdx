@@ -44,9 +44,6 @@ function processInputs() {
     ;
 
     if ((inputs[2] == '-l') || (inputs[2] == '-locate')) {
-        console.log("We're very sorry, -l mode is temporarily disabled due to a MapQuest API issue.\nPlease use -keyword" +
-            " (-n, -k) search instead.");
-        process.exit();
         var address = inputs[3];
         if((typeof address) != "string"){
             console.log("Please enter a street address in quotes after -l to search by address");
