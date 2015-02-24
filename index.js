@@ -316,11 +316,15 @@ function getStopsByName(name){
 }
 
 function displayArrivalsContinuously(){
+    process.stdout.write('\033[2J');
+    process.stdout.write('\033[0;0H');
+    getArrivalsFromFavorites();
+
     var windowResized = true;
     process.stdin.resume();
     process.on('SIGWINCH', function() {
         windowResized = true;
-        getArrivalsFromFavorites();
+        //getArrivalsFromFavorites();
     });
 
 setInterval(
