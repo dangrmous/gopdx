@@ -316,18 +316,20 @@ function getStopsByName(name){
 }
 
 function displayArrivalsContinuously(){
+    var windowResized = false;
     process.stdin.resume();
     process.on('SIGWINCH', function() {
-        console.log("WAT");
-        process.exit('Got SIGWINCH!');
-        process.stdout.write('\033[2J');
-        process.stdout.write('\033[0;0H');
+        windowResized = true;
+        getArrivalsFromFavorites();
     });
-    process.stdout.write('\033[2J');
-    process.stdout.write('\033[0;0H');
-    getArrivalsFromFavorites();
+
 setInterval(
     function(){
+        if(windowResized){
+            process.stdout.write('\033[2J');
+            process.stdout.write('\033[0;0H');
+            windowResized = false;
+        }
         getArrivalsFromFavorites();
         process.stdout.write('\033[0;0H');
     }, 10000)
