@@ -316,7 +316,7 @@ function getStopsByName(name){
 }
 
 function displayArrivalsContinuously(){
-    var windowResized = false;
+    var windowResized = true;
     process.stdin.resume();
     process.on('SIGWINCH', function() {
         windowResized = true;
