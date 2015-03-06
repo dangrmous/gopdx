@@ -200,8 +200,14 @@ function getCoordinates(address, callback) {
         res.on('end', function () {
             mqData = JSON.parse(mqData);
             var oregonLocations = parseOregonLocations(mqData);
-            if (oregonLocations.length == 0) console.log("No Oregon address found!");
-            if (oregonLocations.length > 1) console.log("More than one location found!");
+            if (oregonLocations.length == 0){
+                console.log("No Oregon address found, perhaps try a -keyword search?");
+                process.exit();
+            }
+            if (oregonLocations.length > 1){
+                console.log("More than one possible location found, add more address info or perhaps try a -keyword search?");
+                process.exit();
+            }
             callback(oregonLocations);
         });
         res.on('error', function (e) {
