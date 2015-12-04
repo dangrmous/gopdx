@@ -1,7 +1,4 @@
-+ + + + + OUTAGE ALERT: gopdx is experiencing an outage that started 12/2/2015. I hope to have it back up in a day or
-+ + + + + two. This alert will go away when gopdx is back up and running. Sorry for the inconvenience!
-
-#GoPDX 0.1.19
+#GoPDX 0.1.20
 
 ##GoPDX is a Portland, Oregon Tri-Met bus and light rail arrival tracker
 
@@ -22,8 +19,8 @@ gopdx -f (or -favorites) to display arrivals for stops from your favorites file
 
 gopdx -c (or -continuous) to run continuously, updating arrivals for favorite stops every 60 seconds
 
-####Version 0.1.19 Release notes:
-* README.md (this file) changed for outage alert
+####Version 0.1.20 Release notes:
+* Updated server to fix outage and prevent future outages
 
 ####A note about the favorites file:
 The favorites.json file can be edited directly or deleted entirely (if you'd like to start over).
