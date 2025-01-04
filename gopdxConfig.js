@@ -1,9 +1,9 @@
 var configs = {
-    version: '0.1.20',
+    version: '0.1.21',
     apiServer: "http://104.236.132.232",
     favoritesPath: ""
 }
 
-//    apiServer: "http://104.236.135.28",
+configs.apiServer = "http://localhost:8000";
 
 module.exports = configs;

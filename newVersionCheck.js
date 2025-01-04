@@ -14,7 +14,6 @@ var newVersionCheck = function(callback){
             ver = JSON.parse(ver);
             callback(semver.gtr(ver.appVersion, localVersion));
         });
-
         res.on('error', function (e) {
             console.error("We were unable to reach the gopdx server for some reason. Please file a bug!");
         });

@@ -48,7 +48,7 @@
     "lodash": "^2.4.1",
     "moment": "^2.8.4",
     "q": "^1.1.2",
-    "semver": "^4.2.0"
+    "semver": "^7.6.3"
   },
   "preferGlobal": "true",
   "bin": {

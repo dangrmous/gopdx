@@ -166,18 +166,16 @@ function getNearbyStops(address, distance, callback) {
     }
     getCoordinates(address, function (locationData) {
 
-        lat = locationData[0].latLng.lat;
-        lng = locationData[0].latLng.lng;
+        lat = locationData[0].geometry.lat;
+        lng = locationData[0].geometry.lng;
         http.get(config.apiServer + "/stops?lat=" + lat + "&lng=" + lng + "&key=" + key(), function (res) {
             var stops = '';
             res.on('data', function (chunk) {
                 stops += chunk.toString();
             });
             res.on('end', function () {
-
                 stops = JSON.parse(stops);
                 displayNearbyStops(stops);
-
             });
 
             res.on('error', function (e) {
@@ -280,11 +278,9 @@ function locationPicker(locations) {
 
 function parseOregonLocations(locationData) {
     var oregonLocations = [];
-    locationData.forEach(function (item) {
-        if (item.adminArea3 === 'OR') {
-            oregonLocations.push(item);
-        }
-    });
+    if(locationData.components.state == "Oregon"){
+        oregonLocations.push(locationData);
+    }
     return oregonLocations;
 }
 
