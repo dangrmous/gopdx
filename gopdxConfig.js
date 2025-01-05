@@ -1,5 +1,5 @@
 var configs = {
-    version: '0.1.22',
+    version: '0.1.23',
     apiServer: "http://104.236.132.232",
     favoritesPath: ""
 }
