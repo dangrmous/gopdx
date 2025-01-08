@@ -6,7 +6,6 @@ var moment = require('moment');
 var usage = require('./usage.js');
 var chalk = require('chalk');
 var inquirer = require('inquirer');
-var _ = require('lodash');
 var fs = require('fs');
 var key = require('./key.js');
 var Q = require('q');
@@ -32,16 +31,19 @@ function processInputs() {
     var numbersRegEx = new RegExp('[0-9]');
     if (!inputs[2]) {
         usage();
+    };
+
+    if(inputs.includes('-dev')) {
+        config.apiServer = "http://localhost:8000"
     }
-    ;
+
     if (numbersRegEx.test(inputs[2])) {
         var deferred = Q.defer();
         getArrivals(inputs[2], deferred);
         deferred.promise.then(function(data){
            displayArrivals(data[0], data[1]);
         });
-    }
-    ;
+    };
 
     if ((inputs[2] == '-l') || (inputs[2] == '-locate')) {
         var address = inputs[3];
@@ -256,7 +258,7 @@ function saveStopsToFavorites(selectedStops) {
         //console.log(err);
     }
 
-    favorites.favoriteStops = _.union(favorites.favoriteStops, selectedStops.favoriteStops);
+    favorites.favoriteStops = [...new Set([...favorites.favoriteStops, ...selectedStops.favoriteStops])];
 
     try {
         fs.writeFileSync(favoritesPath, JSON.stringify(favorites), {encoding: 'utf8'});
@@ -298,9 +300,11 @@ function getStopsByName(name){
                 process.exit();
             }
             stops.forEach(function(stop){
-                choiceArray.push({
-                    name:stop.stop_name + " - ID: "+ stop.stop_id +" - Direction: " + stop.direction,
-                    value:stop.stop_code});
+                if(typeof (stop.stop_id) == "number"){
+                    choiceArray.push({
+                        name:stop.stop_name + " - ID: "+ stop.stop_id +" - Direction: " + stop.direction,
+                        value:stop.stop_code});
+                }
             });
             inquirer.prompt(
                 {type: 'checkbox',
