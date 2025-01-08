@@ -19,6 +19,10 @@ gopdx -f (or -favorites) to display arrivals for stops from your favorites file
 
 gopdx -c (or -continuous) to run continuously, updating arrivals for favorite stops every 60 seconds
 
+####Version 0.1.24 Release notes:
+* Updated some older packages
+* Updated code to deal with Trimet's jumbled stop ID's
+
 ####Version 0.1.23 Release notes:
 * Updated server IP to use new server
 
