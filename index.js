@@ -5,7 +5,7 @@ var config = require('./gopdxConfig.js');
 var moment = require('moment');
 var usage = require('./usage.js');
 var chalk = require('chalk');
-var inquirer = require('inquirer');
+var prompts = require('@inquirer/prompts');
 var fs = require('fs');
 var key = require('./key.js');
 var Q = require('q');
@@ -136,7 +136,7 @@ function displayArrivals(stop, arrivalData) {
             ;
             if (arrival.status == "scheduled") {
                 arrivalsFound++;
-                arrivalTime = moment(arrival.scheduled);
+                var arrivalTime = moment(arrival.scheduled);
                 if (arrivalTime > moment()) {
                     console.log(chalk.bold(arrival.shortSign) +
                         " " + arrivalTime.fromNow() + " at " + arrivalTime.format('h:mm a') + chalk.yellow(" [scheduled]"));
@@ -168,8 +168,8 @@ function getNearbyStops(address, distance, callback) {
     }
     getCoordinates(address, function (locationData) {
 
-        lat = locationData[0].geometry.lat;
-        lng = locationData[0].geometry.lng;
+        var lat = locationData[0].geometry.lat;
+        var lng = locationData[0].geometry.lng;
         http.get(config.apiServer + "/stops?lat=" + lat + "&lng=" + lng + "&key=" + key(), function (res) {
             var stops = '';
             res.on('data', function (chunk) {
@@ -216,7 +216,7 @@ function getCoordinates(address, callback) {
     });
 }
 
-function displayNearbyStops(stops) {
+async function displayNearbyStops(stops) {
     if (stops.resultSet.location) {
         var stopsArray = {favoriteStops: []};
 
@@ -234,13 +234,11 @@ function displayNearbyStops(stops) {
             }
         )
 
-        inquirer.prompt(
-            {type: 'checkbox',
-                name: 'favoriteStops',
-                message: 'Please select any stops to save to your favorites:',
-                choices: stopsArray.favoriteStops}, function (answer) {
-                saveStopsToFavorites(answer);
-            });
+        const answer = await prompts.checkbox({
+            message: 'Please select any stops to save to your favorites:',
+            choices: stopsArray.favoriteStops
+        });
+        saveStopsToFavorites(answer);
     }
 
     else {
@@ -258,7 +256,7 @@ function saveStopsToFavorites(selectedStops) {
         //console.log(err);
     }
 
-    favorites.favoriteStops = [...new Set([...favorites.favoriteStops, ...selectedStops.favoriteStops])];
+    favorites.favoriteStops = [...new Set([...favorites.favoriteStops, ...selectedStops])];
 
     try {
         fs.writeFileSync(favoritesPath, JSON.stringify(favorites), {encoding: 'utf8'});
@@ -271,12 +269,6 @@ function saveStopsToFavorites(selectedStops) {
             "like /tmp/favorites.json or similar");
     }
 }
-
-function locationPicker(locations) {
-    console.log("Your search returned more than one location. Please refine your search address.");
-
-    return;
-};
 
 function parseOregonLocations(locationData) {
     var oregonLocations = [];
@@ -293,7 +285,7 @@ function getStopsByName(name){
         res.on('data', function(chunk){
             stops += chunk.toString();
         });
-        res.on('end',function(){
+        res.on('end',async function(){
             stops = JSON.parse(stops);
             if(stops.error){
                 console.log(stops.error);
@@ -306,13 +298,11 @@ function getStopsByName(name){
                         value:stop.stop_code});
                 }
             });
-            inquirer.prompt(
-                {type: 'checkbox',
-                    name: 'favoriteStops',
-                    message: 'Please select any stops to save to your favorites:',
-                    choices: choiceArray}, function (answer) {
-                    saveStopsToFavorites(answer);
-                });
+            const answer = await prompts.checkbox({
+                message: 'Please select any stops to save to your favorites:',
+                choices: choiceArray
+            });
+            saveStopsToFavorites(answer);
 
         });
         res.on('error',function(err){
@@ -322,8 +312,8 @@ function getStopsByName(name){
 }
 
 function displayArrivalsContinuously(){
-    process.stdout.write('\033[2J');
-    process.stdout.write('\033[0;0H');
+    process.stdout.write('\x1B[2J');
+    process.stdout.write('\x1B[0;0H');
     getArrivalsFromFavorites();
 
     var windowResized = true;
@@ -336,12 +326,12 @@ function displayArrivalsContinuously(){
 setInterval(
     function(){
         if(windowResized){
-            process.stdout.write('\033[2J');
-            process.stdout.write('\033[0;0H');
+            process.stdout.write('\x1B[2J');
+            process.stdout.write('\x1B[0;0H');
             windowResized = false;
         }
         getArrivalsFromFavorites();
-        process.stdout.write('\033[0;0H');
+        process.stdout.write('\x1B[0;0H');
     }, 10000)
 
 }
