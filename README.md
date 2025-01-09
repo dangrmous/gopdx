@@ -1,8 +1,8 @@
-#GoPDX 0.1.25
+# GoPDX 0.1.25
 
-##GoPDX is a Portland, Oregon Tri-Met bus and light rail arrival tracker
+## GoPDX is a Portland, Oregon Tri-Met bus and light rail arrival tracker
 
-###Usage:
+### Usage:
 
 gopdx [stop number] to display upcoming arrivals for stop
 
@@ -19,22 +19,27 @@ gopdx -f (or -favorites) to display arrivals for stops from your favorites file
 
 gopdx -c (or -continuous) to run continuously, updating arrivals for favorite stops every 60 seconds
 
-####Version 0.1.24 Release notes:
+#### Version 0.1.25 Release notes:
+* Removed lodash
+* Updated to current Inquirer
+* `npm audit` now shows 0 vulnerabilities
+
+#### Version 0.1.24 Release notes:
 * Updated some older packages
 * Updated code to deal with Trimet's jumbled stop ID's
 
-####Version 0.1.23 Release notes:
+#### Version 0.1.23 Release notes:
 * Updated server IP to use new server
 
-####Version 0.1.22 Release notes:
+#### Version 0.1.22 Release notes:
 * Moved from MapQuest geocoding to OpenCage
 * Updated to more current version of Hapi
 * The server is now public code at gopdx-server-public on Github
 
-####Version 0.1.20 Release notes:
+#### Version 0.1.20 Release notes:
 * Updated server to fix outage and prevent future outages
 
-####A note about the favorites file:
+#### A note about the favorites file:
 The favorites.json file can be edited directly or deleted entirely (if you'd like to start over).
 It is located where Node installs the gopdx app, typically in /usr/local/lib/node_modules/gopdx/ but
 this may vary.
@@ -47,7 +52,7 @@ gopdxConfig.js is also location in the same folder as the gopdx program. Add the
 favoritesPath property in the file. Delete any other favorites.json files on your system to reduce confusion.
 
 
-#####_Created by Geoffrey D. Unger_
+##### _Created by Geoffrey D. Unger_
 
 
 
