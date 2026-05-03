@@ -1,4 +1,4 @@
-# GoPDX 0.1.25
+# GoPDX 0.1.26
 
 ## GoPDX is a Portland, Oregon Tri-Met bus and light rail arrival tracker
 
@@ -18,6 +18,9 @@ separated by spaces and add them to your favorites file
 gopdx -f (or -favorites) to display arrivals for stops from your favorites file
 
 gopdx -c (or -continuous) to run continuously, updating arrivals for favorite stops every 60 seconds
+
+#### Version 0.1.26 Release notes:
+* Changed server to run from pm2
 
 #### Version 0.1.25 Release notes:
 * Removed lodash
