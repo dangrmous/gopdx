@@ -19,6 +19,9 @@ gopdx -f (or -favorites) to display arrivals for stops from your favorites file
 
 gopdx -c (or -continuous) to run continuously, updating arrivals for favorite stops every 60 seconds
 
+#### Version 0.1.26 Release notes:
+* Updated server to use pm2
+
 #### Version 0.1.25 Release notes:
 * Removed lodash
 * Updated to current Inquirer
